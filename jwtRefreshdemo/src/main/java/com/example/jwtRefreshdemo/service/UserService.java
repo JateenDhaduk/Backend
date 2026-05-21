@@ -1,9 +1,6 @@
 package com.example.jwtRefreshdemo.service;
 
-import com.example.jwtRefreshdemo.dto.UserLoginRequest;
-import com.example.jwtRefreshdemo.dto.UserLoginResponse;
-import com.example.jwtRefreshdemo.dto.UserRegisterRequest;
-import com.example.jwtRefreshdemo.dto.UserRegisterResponse;
+import com.example.jwtRefreshdemo.dto.*;
 import com.example.jwtRefreshdemo.entity.UserEntity;
 import com.example.jwtRefreshdemo.repoitory.UserRepository;
 import com.example.jwtRefreshdemo.security.JwtUtils;
@@ -23,6 +20,7 @@ public class UserService {
     private final JwtUtils jwtUtils;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final RefreshTokenService refreshTokenService;
     public UserRegisterResponse registerUser(UserRegisterRequest request) {
         UserEntity tempUser = UserEntity.builder()
                 .email(request.getEmail())
@@ -42,7 +40,7 @@ public class UserService {
                 .build();
     }
 
-    public UserLoginResponse loginUser( UserLoginRequest request) {
+    public LoginResult loginUser(UserLoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                 request.getUsername(),request.getPassword()
@@ -52,16 +50,17 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found " + request.getUsername()));
 
         String accessToken = jwtUtils.generateAccessToken(userDetails);
-        String refreshToken = jwtUtils.buildRefreshToken(request.getUsername());
+        String refreshToken = refreshTokenService.createRefreshToken(user);
 
-        return UserLoginResponse.builder()
+        UserLoginResponse loginResponse =  UserLoginResponse.builder()
                 .userName(user.getUsername())
                 .accessToken(accessToken)
-                .refreshToken(refreshToken)
                 .role(user.getRole().toString())
                 .email(user.getEmail())
                 .tokenType("Bearer")
                 .expiresIn(jwtUtils.getJwtExpirationMils()/1000)
                 .build();
+
+        return new LoginResult(loginResponse,refreshToken);
     }
 }
