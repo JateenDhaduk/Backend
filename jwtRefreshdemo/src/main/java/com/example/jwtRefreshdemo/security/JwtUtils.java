@@ -1,6 +1,5 @@
 package com.example.jwtRefreshdemo.security;
 
-import com.example.jwtRefreshdemo.entity.UserEntity;
 import io.jsonwebtoken.io.Decoders;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,7 +13,6 @@ import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 import java.util.function.Function;
 
 @Component
@@ -47,11 +45,6 @@ public class JwtUtils {
                 .signWith(Key())
                 .compact();
 
-    }
-
-    public String buildRefreshToken(String username){
-        String refreshToken = UUID.randomUUID().toString();
-        return refreshToken;
     }
 
     public SecretKey Key() {
