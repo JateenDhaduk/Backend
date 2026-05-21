@@ -5,6 +5,8 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -32,5 +34,8 @@ public class UserEntity {
     @Builder.Default
     @Enumerated(EnumType.STRING)
     private Role role = Role.USER;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<RefreshToken> refreshTokens;
 
 }
