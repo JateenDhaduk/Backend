@@ -353,4 +353,3 @@ Each demo includes a **"Break It On Purpose"** section — remove the `Content-T
 
 ---
 
-> **Next module:** [Module 04 — Databases](../04-databases/) — now that you understand how data moves between client and server, we look at how it gets stored and retrieved permanently.
